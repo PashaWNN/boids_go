@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
+	"image/color"
 	"math"
-	"math/rand"
 )
 
 
@@ -43,6 +43,7 @@ type Boid struct{
 	position mgl32.Vec2
 	velocity mgl32.Vec2
 	acceleration mgl32.Vec2
+	col color.RGBA
 }
 
 
@@ -50,8 +51,9 @@ func NewBoid(x, y float32, boids *[]Boid) Boid {
 	b := Boid{
 		siblings: boids,
 		position:mgl32.Vec2{x, y},
-		velocity:mgl32.Vec2{(rand.Float32() * 3) - 1.5, (rand.Float32() * 3) - 1.5},
+		velocity:mgl32.Vec2{(r.Float32() * 3) - 1.5, (r.Float32() * 3) - 1.5},
 		acceleration:mgl32.Vec2{0,0},
+		col:color.RGBA{uint8(r.Intn(255)), uint8(r.Intn(255)), uint8(r.Intn(255)), 0xff},
 	}
 	return b
 }
@@ -98,7 +100,7 @@ func (boid* Boid) cohesion() mgl32.Vec2 {
 }
 
 
-func (boid* Boid) divison() mgl32.Vec2 {
+func (boid* Boid) separation() mgl32.Vec2 {
 	avg = mgl32.Vec2{0,0}
 	total = 0
 
@@ -123,7 +125,7 @@ func (boid* Boid) divison() mgl32.Vec2 {
 func (boid* Boid) Tick() {
 	boid.acceleration = boid.acceleration.Add(boid.alignment().Mul(1.5))
 	boid.acceleration = boid.acceleration.Add(boid.cohesion().Mul(1.0))
-	boid.acceleration = boid.acceleration.Add(boid.divison().Mul(2.0))
+	boid.acceleration = boid.acceleration.Add(boid.separation().Mul(2.0))
 
 	boid.position = boid.position.Add(boid.velocity)
 	boid.velocity = boid.velocity.Add(boid.acceleration.Mul(0.5))

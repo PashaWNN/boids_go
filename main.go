@@ -6,6 +6,7 @@ import (
 	"github.com/markfarnan/go-canvas/canvas"
 	"image/color"
 	"math/rand"
+	"time"
 )
 
 var boids []Boid
@@ -17,13 +18,18 @@ var width float64
 var height float64
 
 
+var s = rand.NewSource(time.Now().UnixNano())
+var r = rand.New(s)
+
 func main() {
+
 	cvs, _ = canvas.NewCanvas2d(true)
 	height = float64(cvs.Height())
 	width = float64(cvs.Width())
+
 	for i := 0; i < 70; i++ {
 
-		boids = append(boids, NewBoid(float32(rand.Intn(500)), float32(rand.Intn(700)), &boids))
+		boids = append(boids, NewBoid(float32(r.Intn(cvs.Width())), float32(r.Intn(cvs.Height())), &boids))
 	}
 	cvs.Start(60, Render)
 	<-done
@@ -37,6 +43,9 @@ func tick() {
 }
 
 func drawBoid(gc *draw2dimg.GraphicContext, b Boid) {
+	gc.SetFillColor(b.col)
+	gc.SetStrokeColor(b.col)
+
 	gc.BeginPath()
 	draw2dkit.Circle(gc, float64(b.position.X()), float64(b.position.Y()), 5)
 	gc.FillStroke()
@@ -51,10 +60,6 @@ func drawBoid(gc *draw2dimg.GraphicContext, b Boid) {
 	gc.Stroke()
 	gc.Close()
 
-	//gc.BeginPath()
-	//draw2dkit.Circle(gc, float64(b.position.X()), float64(b.position.Y()), 20)
-	//gc.Stroke()
-	//gc.Close()
 }
 
 func Render(gc *draw2dimg.GraphicContext) bool {

@@ -2,7 +2,7 @@
 
 Boids algorithm implementation in Go language, compiled to WebAssembly
 
-[Live demo](pashawnn.github.io/boids_go/)
+[Live demo](https://pashawnn.github.io/boids_go/)
 
 
 ## Compilation
